@@ -1,50 +1,68 @@
+"""
+The shortest calculator program can be done in a single line using the "eval()" function in python:
+print(eval(input("Enter the expression as a string: ")))
+"""
+
 import tkinter as tk
 
-def on_click(value):
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, str(current) + str(value))
-
-def clear_entry():
-    entry.delete(0, tk.END)
-
 def calculate():
+    """
+    Perform calculation based on the expression entered in the entry field.
+    If successful, display the result. If there's an error, display 'Error'.
+    """
     try:
-        result = eval(entry.get())
+        expression = entry.get()
+        result = eval(expression)
         entry.delete(0, tk.END)
         entry.insert(tk.END, str(result))
     except Exception as e:
         entry.delete(0, tk.END)
         entry.insert(tk.END, "Error")
 
+def add_to_display(value):
+    """
+    Add a value to the entry field when a button is clicked.
+
+    Args:
+    - value: The value to be added to the entry field.
+    """
+    entry.insert(tk.END, value)
+
+def clear_display():
+    """Clear the content in the entry field."""
+    entry.delete(0, tk.END)
+
 # Create the main window
 root = tk.Tk()
-root.title("Simple Calculator")
+root.title("Colorful Calculator")
 
-# Entry widget to display the input and results
-entry = tk.Entry(root, width=20, font=('Arial', 16))
-entry.grid(row=0, column=0, columnspan=4)
+# Entry field for display
+entry = tk.Entry(root, width=30, borderwidth=5)
+entry.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
 
-# Buttons
+# Define button layout
 buttons = [
-    '7', '8', '9', '/',
-    '4', '5', '6', '*',
-    '1', '2', '3', '-',
-    '0', '.', '=', '+'
+    ('7', '8', '9', '/'),
+    ('4', '5', '6', '*'),
+    ('1', '2', '3', '-'),
+    ('0', 'C', '=', '+')
 ]
 
-row_val = 1
-col_val = 0
+# Create and place buttons in a grid layout
+row_num = 1
+col_num = 0
 
-for button in buttons:
-    tk.Button(root, text=button, width=5, height=2, command=lambda b=button: on_click(b) if b != '=' else calculate()).grid(row=row_val, column=col_val)
-    col_val += 1
-    if col_val > 3:
-        col_val = 0
-        row_val += 1
+for row in buttons:
+    col_num = 0
+    for button_text in row:
+        if button_text == '=':
+            button = tk.Button(root, text=button_text, padx=40, pady=20, command=calculate, bg='orange')
+        elif button_text == 'C':
+            button = tk.Button(root, text=button_text, padx=40, pady=20, command=clear_display, bg='red')
+        else:
+            button = tk.Button(root, text=button_text, padx=40, pady=20, command=lambda value=button_text: add_to_display(value))
+        button.grid(row=row_num, column=col_num, padx=5, pady=5)
+        col_num += 1
+    row_num += 1
 
-# Clear button
-tk.Button(root, text='C', width=5, height=2, command=clear_entry).grid(row=row_val, column=col_val)
-
-# Run the main loop
-root.mainloop()
+root.mainloop()  # Start the main event loop
